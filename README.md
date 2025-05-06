@@ -1,1 +1,2 @@
-# Solar-radiation-prediction
+# Solar-radiation-prediction 
+pip install -r requirements.txt
