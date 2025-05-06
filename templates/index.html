@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <title>Solar Radiation Prediction</title>
+  <style>
+    .card { transition: transform 0.3s ease, box-shadow 0.3s ease; height: 100%; }
+    .card:hover { transform: scale(1.03); box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); }
+    .model-header { background-color: #007bff; color: white; padding: 6px; border-radius: 8px 8px 0 0; text-align: center; }
+    .card-title { font-size: 1.3rem; font-weight: bold; margin-bottom: 0; }
+    .card-body { background-color: #f9f9f9; border-radius: 0 0 8px 8px; }
+    .metric { font-size: 1.05rem; font-weight: 500; }
+    .container { margin-top: 40px; }
+    .row-cols-md-2 { display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content: center; }
+    .col { flex: 0 0 calc(50% - 1.5rem); max-width: calc(50% - 1.5rem); }
+    .card img { height: 300px; object-fit: contain; }
+    .input-group-text { width: 100px; }
+  </style>
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="#">Solar Prediction</a>
+  </div>
+</nav>
+
+<div class="container py-4">
+  <h1 class="mb-4 text-center text-primary">Solar Radiation Prediction</h1>
+
+  <form method="POST" class="mb-4">
+    <div class="row justify-content-center">
+      <div class="col-md-3">
+        <div class="input-group mb-3">
+          <span class="input-group-text">Latitude</span>
+          <input type="number" name="latitude" step="0.0001" class="form-control" required value="{{ latitude }}">
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="input-group mb-3">
+          <span class="input-group-text">Longitude</span>
+          <input type="number" name="longitude" step="0.0001" class="form-control" required value="{{ longitude }}">
+        </div>
+      </div>
+      <div class="col-md-2 text-center">
+        <button class="btn btn-success w-100" type="submit">Predict</button>
+      </div>
+    </div>
+  </form>
+
+  <p class="text-center"> Predicted Date: {{ date }} (6 AM–6 PM)</p>
+
+  <div class="row row-cols-1 row-cols-md-2 g-4">
+    {% for label, result in model_results.items() %}
+      <div class="col">
+        <div class="card shadow-sm h-100">
+          <div class="model-header">
+            <h5 class="card-title">{{ label }}</h5>
+          </div>
+          <div class="card-body">
+            <img src="{{ url_for('static', filename='images/' + result.image) }}" class="img-fluid rounded mb-3" alt="{{ label }} chart"/>
+            <div class="text-center">
+              <p class="metric"><strong>MSE:</strong> {{ result.mse | round(2) }}</p>
+              <p class="metric"><strong>R² Accuracy:</strong> {{ result.r2 | round(2) }}</p>
+              <p class="metric"><strong>Max Predicted Radiation:</strong> {{ result.max_pred | round(2) }} W/m² at {{ result.max_hour }}:00</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
+</body>
+</html>
